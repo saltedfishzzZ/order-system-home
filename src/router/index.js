@@ -66,6 +66,28 @@ export const constantRoutes = [
     ]
   },
 
+  {
+    path: '/merchant',
+    component: Layout,
+    redirect: '/merchant/info',
+    name: '商户信息',
+    meta: { title: '商户信息', icon: 'el-icon-menu' },
+    children: [
+      {
+        path: 'info',
+        name: '信息展示',
+        component: () => import('@/views/merchant/info'),
+        meta: { title: '信息展示', icon: 'el-icon-notebook-2' }
+      },
+      {
+        path: 'edit',
+        name: '信息编辑',
+        component: () => import('@/views/merchant/edit'),
+        meta: { title: '信息编辑', icon: 'el-icon-edit' }
+      }
+    ]
+  },
+
   // 404
   { path: '*', redirect: '/404', hidden: true }
 ]

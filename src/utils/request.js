@@ -17,6 +17,7 @@ service.interceptors.request.use(
     if (store.getters.token) {
       config.headers['token'] = getToken()
     }
+    config.headers['Access-Control-Max-Age'] = 1728000
     return config
   },
   error => {

@@ -6,7 +6,8 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    merchantId: ''
   }
 }
 
@@ -24,6 +25,9 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_MERCHANT_ID: (state, merchantId) => {
+    state.merchantId = merchantId
   }
 }
 
@@ -53,9 +57,10 @@ const actions = {
           return reject('验证失败, 请重新登录.')
         }
 
-        const { nickName, avatar } = data
+        const { nickName, avatar, merchantId } = data
         commit('SET_NAME', nickName)
         commit('SET_AVATAR', avatar)
+        commit('SET_MERCHANT_ID', merchantId)
         resolve(data)
       }).catch(error => {
         reject(error)
@@ -67,7 +72,7 @@ const actions = {
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
-        removeToken() // must remove  token  first
+        removeToken()
         resetRouter()
         commit('RESET_STATE')
         resolve()
@@ -80,7 +85,7 @@ const actions = {
   // remove token
   resetToken({ commit }) {
     return new Promise(resolve => {
-      removeToken() // must remove  token  first
+      removeToken()
       commit('RESET_STATE')
       resolve()
     })
