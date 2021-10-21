@@ -1,8 +1,9 @@
 import request from '@/utils/request'
 
-export function getCategoryList(id) {
+export function getCategoryList(id, pageNo, pageSize) {
   return request({
     url: `/category/list/${id}`,
-    method: 'get'
+    method: 'get',
+    params: { pageNo, pageSize }
   })
 }
