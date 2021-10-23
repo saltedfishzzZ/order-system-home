@@ -17,7 +17,7 @@
     <el-table
       :data="categoryList"
       border
-      style="width: 100%"
+      style="width: 100%; margin-bottom: 20px; margin-top: 20px;"
     >
       <el-table-column
         type="selection"
@@ -78,8 +78,8 @@
 </template>
 
 <script>
-import {getCategoryList} from '@/api/categoty'
-import {mapGetters} from 'vuex'
+import { getCategoryList } from '@/api/categoty'
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
@@ -102,7 +102,7 @@ export default {
     fetchData(pageNo, pageSize) {
       getCategoryList(this.merchantId, pageNo, pageSize)
         .then(response => {
-          const {content, totalElements} = response.data.categoryList
+          const { content, totalElements } = response.data.categoryList
           this.categoryList = content
           this.total = totalElements
         })
