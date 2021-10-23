@@ -6,18 +6,24 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="24" :offset="23">
+      <el-col :span="24" :offset="22">
         <el-button
           size="small"
           type="primary"
         >添加
         </el-button>
+        <el-button
+          size="small"
+          type="danger"
+          @click="batchDelete"
+        >批量删除</el-button>
       </el-col>
     </el-row>
     <el-table
       :data="categoryList"
       border
       style="width: 100%; margin-bottom: 20px; margin-top: 20px;"
+      @selection-change="handleSelection"
     >
       <el-table-column
         type="selection"
@@ -78,13 +84,14 @@
 </template>
 
 <script>
-import { getCategoryList } from '@/api/categoty'
+import { getCategoryList, batchDeleteCategory } from '@/api/categoty'
 import { mapGetters } from 'vuex'
 
 export default {
   data() {
     return {
       categoryList: [],
+      selectCategoryList: [],
       pageNo: 1,
       pageSize: 10,
       total: 0
@@ -119,6 +126,39 @@ export default {
     changePageNo(val) {
       this.pageNo = val
       this.fetchData(this.pageNo, this.pageSize)
+    },
+    // 表格中选中处理
+    handleSelection(val) {
+      this.selectCategoryList = val
+    },
+    // 批量删除选中数据
+    batchDelete() {
+      // 选中数量为0时无需删除
+      if (this.selectCategoryList.length === 0) {
+        this.$notify.info({
+          title: '消息',
+          message: '当前无选中数据可删除'
+        })
+        return
+      }
+      // 当有选中数据时
+      this.$confirm('确认批量删除吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const selectIdList = []
+        this.selectCategoryList.map(item => selectIdList.push(item.id))
+        batchDeleteCategory(selectIdList)
+          .then(response => {
+            this.$message.success(response.message)
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      }).catch(error => {
+        this.$message.error(error)
+      })
     }
   }
 }

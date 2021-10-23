@@ -7,3 +7,12 @@ export function getCategoryList(id, pageNo, pageSize) {
     params: { pageNo, pageSize }
   })
 }
+
+export function batchDeleteCategory(idList) {
+  console.log(idList)
+  return request({
+    url: `/category/batch/delete`,
+    method: 'delete',
+    data: idList
+  })
+}
