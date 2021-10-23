@@ -16,7 +16,8 @@
           size="small"
           type="danger"
           @click="batchDelete"
-        >批量删除</el-button>
+        >批量删除
+        </el-button>
       </el-col>
     </el-row>
     <el-table
@@ -58,16 +59,22 @@
         label="操作"
         align="center"
       >
-        <template>
+        <template v-slot="scope">
           <el-button
             size="mini"
           >编辑
           </el-button>
-          <el-button
-            size="mini"
-            type="danger"
-          >删除
-          </el-button>
+          <el-popconfirm
+            icon="el-icon-warning"
+            icon-color="red"
+            title="删除后无法恢复, 请确认是否删除?"
+            @confirm="deleteById(scope.row.id)"
+          >
+            <el-button
+              slot="reference"
+              size="mini"
+            >删除</el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -84,7 +91,7 @@
 </template>
 
 <script>
-import { getCategoryList, batchDeleteCategory } from '@/api/categoty'
+import { getCategoryList, batchDeleteCategory, deleteCategory } from '@/api/categoty'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -94,7 +101,8 @@ export default {
       selectCategoryList: [],
       pageNo: 1,
       pageSize: 10,
-      total: 0
+      total: 0,
+      showStatus: false
     }
   },
   computed: {
@@ -127,6 +135,24 @@ export default {
       this.pageNo = val
       this.fetchData(this.pageNo, this.pageSize)
     },
+    // 单个删除
+    deleteById(id) {
+      deleteCategory(id)
+        .then(response => {
+          const { message } = response
+          this.$message({
+            type: 'success',
+            message: message,
+            duration: 1000
+          })
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
+      setTimeout(() => {
+        this.$router.go(0)
+      }, 1000)
+    },
     // 表格中选中处理
     handleSelection(val) {
       this.selectCategoryList = val
@@ -151,11 +177,19 @@ export default {
         this.selectCategoryList.map(item => selectIdList.push(item.id))
         batchDeleteCategory(selectIdList)
           .then(response => {
-            this.$message.success(response.message)
+            const { message } = response
+            this.$message({
+              type: 'success',
+              message: message,
+              duration: 1000
+            })
           })
           .catch(error => {
             this.$message.error(error)
           })
+        setTimeout(() => {
+          this.$router.go(0)
+        }, 1000)
       }).catch(error => {
         this.$message.error(error)
       })

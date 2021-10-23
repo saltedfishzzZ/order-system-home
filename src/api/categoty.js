@@ -8,8 +8,14 @@ export function getCategoryList(id, pageNo, pageSize) {
   })
 }
 
+export function deleteCategory(id) {
+  return request({
+    url: `/category/${id}`,
+    method: 'delete'
+  })
+}
+
 export function batchDeleteCategory(idList) {
-  console.log(idList)
   return request({
     url: `/category/batch/delete`,
     method: 'delete',
