@@ -2,19 +2,21 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <h3>类别列表</h3>
+        <h2>类别列表</h2>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="24" :offset="22">
+      <el-col :span="24" :offset="21">
         <el-button
           size="small"
           type="primary"
+          @click="addCategory"
         >添加
         </el-button>
         <el-button
           size="small"
           type="danger"
+          style="margin-right: 20px;"
           @click="batchDelete"
         >批量删除
         </el-button>
@@ -87,11 +89,25 @@
       @size-change="changePageSize"
       @current-change="changePageNo"
     />
+    <el-dialog
+      :title="dialogTitle"
+      :visible.sync="addOrEditShowStatus"
+    >
+      <el-form :model="addOrEditForm">
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="addOrEditForm.name" placeholder="请输入类别名称" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addOrEditShowStatus = false">取消</el-button>
+        <el-button type="primary" @click="handleAddOrUpdate">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getCategoryList, batchDeleteCategory, deleteCategory } from '@/api/categoty'
+import { getCategoryList, batchDeleteCategory, deleteCategory, addCategory } from '@/api/categoty'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -99,10 +115,13 @@ export default {
     return {
       categoryList: [],
       selectCategoryList: [],
+      addOrEditForm: {},
       pageNo: 1,
       pageSize: 10,
       total: 0,
-      showStatus: false
+      showStatus: false,
+      addOrEditShowStatus: false,
+      dialogTitle: ''
     }
   },
   computed: {
@@ -134,6 +153,33 @@ export default {
     changePageNo(val) {
       this.pageNo = val
       this.fetchData(this.pageNo, this.pageSize)
+    },
+    // 添加
+    addCategory() {
+      this.addOrEditShowStatus = true
+      this.dialogTitle = '添加类别'
+    },
+    handleAddOrUpdate() {
+      if (this.addOrEditForm.id) {
+        console.log('更新类别')
+      } else {
+        this.addOrEditForm.merchantId = this.merchantId
+        addCategory(this.addOrEditForm)
+          .then(response => {
+            console.log(response)
+            const { message } = response
+            this.$message({
+              type: 'success',
+              message: message,
+              duration: 1000
+            })
+          })
+          .catch(error => this.$message.error(error))
+      }
+      setTimeout(() => {
+        this.addOrEditShowStatus = false
+        this.$router.go(0)
+      }, 1000)
     },
     // 单个删除
     deleteById(id) {

@@ -8,6 +8,14 @@ export function getCategoryList(id, pageNo, pageSize) {
   })
 }
 
+export function addCategory(data) {
+  return request({
+    url: `/category`,
+    method: 'post',
+    data
+  })
+}
+
 export function deleteCategory(id) {
   return request({
     url: `/category/${id}`,

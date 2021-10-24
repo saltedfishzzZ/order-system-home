@@ -51,27 +51,16 @@ export const constantRoutes = [
       }
     ]
   },
-
   {
     path: '/category',
     component: Layout,
     redirect: '/category/list',
-    name: '类别信息',
-    meta: { title: '类别信息', icon: 'el-icon-collection-tag' },
-    children: [
-      {
-        path: 'list',
-        name: '类别列表',
-        component: () => import('@/views/category/list'),
-        meta: { title: '类别列表', icon: 'el-icon-notebook-2' }
-      },
-      {
-        path: 'edit',
-        name: '编辑类别',
-        component: () => import('@/views/category/edit'),
-        meta: { title: '类别编辑', icon: 'el-icon-edit' }
-      }
-    ]
+    children: [{
+      path: 'list',
+      name: '类别信息',
+      component: () => import('@/views/category/list'),
+      meta: { title: '类别信息', icon: 'el-icon-collection-tag' }
+    }]
   },
 
   // 404
