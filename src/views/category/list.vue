@@ -64,6 +64,9 @@
         <template v-slot="scope">
           <el-button
             size="mini"
+            type="primary"
+            style="margin-right: 10px;"
+            @click="editCategory(scope.row.id, scope.row.categoryName)"
           >编辑
           </el-button>
           <el-popconfirm
@@ -75,6 +78,7 @@
             <el-button
               slot="reference"
               size="mini"
+              type="danger"
             >删除</el-button>
           </el-popconfirm>
         </template>
@@ -107,7 +111,7 @@
 </template>
 
 <script>
-import { getCategoryList, batchDeleteCategory, deleteCategory, addCategory } from '@/api/categoty'
+import * as categoryApi from '@/api/categoty'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -134,7 +138,7 @@ export default {
   },
   methods: {
     fetchData(pageNo, pageSize) {
-      getCategoryList(this.merchantId, pageNo, pageSize)
+      categoryApi.getCategoryList(this.merchantId, pageNo, pageSize)
         .then(response => {
           const { content, totalElements } = response.data.categoryList
           this.categoryList = content
@@ -159,14 +163,30 @@ export default {
       this.addOrEditShowStatus = true
       this.dialogTitle = '添加类别'
     },
+    // 编辑
+    editCategory(id, categoryName) {
+      this.addOrEditShowStatus = true
+      this.dialogTitle = '编辑类别'
+      this.addOrEditForm = { id, name: categoryName }
+    },
     handleAddOrUpdate() {
       if (this.addOrEditForm.id) {
-        console.log('更新类别')
+        categoryApi.editCategory(this.addOrEditForm.id, this.addOrEditForm.name)
+          .then(response => {
+            const { message } = response
+            this.$message({
+              type: 'success',
+              message: message,
+              duration: 1000
+            })
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
       } else {
         this.addOrEditForm.merchantId = this.merchantId
-        addCategory(this.addOrEditForm)
+        categoryApi.addCategory(this.addOrEditForm)
           .then(response => {
-            console.log(response)
             const { message } = response
             this.$message({
               type: 'success',
@@ -178,12 +198,13 @@ export default {
       }
       setTimeout(() => {
         this.addOrEditShowStatus = false
+        this.addOrEditForm = {}
         this.$router.go(0)
       }, 1000)
     },
     // 单个删除
     deleteById(id) {
-      deleteCategory(id)
+      categoryApi.deleteCategory(id)
         .then(response => {
           const { message } = response
           this.$message({
@@ -221,7 +242,7 @@ export default {
       }).then(() => {
         const selectIdList = []
         this.selectCategoryList.map(item => selectIdList.push(item.id))
-        batchDeleteCategory(selectIdList)
+        categoryApi.batchDeleteCategory(selectIdList)
           .then(response => {
             const { message } = response
             this.$message({

@@ -16,6 +16,14 @@ export function addCategory(data) {
   })
 }
 
+export function editCategory(id, name) {
+  return request({
+    url: `/category/${id}`,
+    method: 'put',
+    data: { name }
+  })
+}
+
 export function deleteCategory(id) {
   return request({
     url: `/category/${id}`,
