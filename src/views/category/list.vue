@@ -160,6 +160,7 @@ export default {
     },
     // 添加
     addCategory() {
+      this.addOrEditForm = {}
       this.addOrEditShowStatus = true
       this.dialogTitle = '添加类别'
     },
