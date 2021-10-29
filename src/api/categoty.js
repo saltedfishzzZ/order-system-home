@@ -38,3 +38,25 @@ export function batchDeleteCategory(idList) {
     data: idList
   })
 }
+
+export function getShowOrder(merchantId) {
+  return request({
+    url: `/category/getShowOrder`,
+    method: 'get',
+    params: { merchantId }
+  })
+}
+
+export function upOrder(id) {
+  return request({
+    url: `/category/upOrder/${id}`,
+    method: 'post'
+  })
+}
+
+export function downOrder(id) {
+  return request({
+    url: `/category/downOrder/${id}`,
+    method: 'post'
+  })
+}

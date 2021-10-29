@@ -48,13 +48,13 @@
       <el-table-column
         prop="createTime"
         label="创建时间"
-        width="250"
+        width="200"
         align="center"
       />
       <el-table-column
         prop="updateTime"
         label="更新时间"
-        width="250"
+        width="200"
         align="center"
       />
       <el-table-column
@@ -65,7 +65,7 @@
           <el-button
             size="mini"
             type="primary"
-            style="margin-right: 10px;"
+            style="margin-right: 5px;"
             @click="editCategory(scope.row.id, scope.row.categoryName)"
           >编辑
           </el-button>
@@ -79,8 +79,23 @@
               slot="reference"
               size="mini"
               type="danger"
+              style="margin-right: 5px;"
             >删除</el-button>
           </el-popconfirm>
+          <el-button
+            v-if="scope.row.showOrder !== minShowOrder"
+            size="mini"
+            type="primary"
+            icon="el-icon-caret-top"
+            @click="upOrder(scope.row.id)"
+          >上移</el-button>
+          <el-button
+            v-if="scope.row.showOrder !== maxShowOrder"
+            size="mini"
+            type="primary"
+            icon="el-icon-caret-bottom"
+            @click="downOrder(scope.row.id)"
+          >下移</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -113,6 +128,7 @@
 <script>
 import * as categoryApi from '@/api/categoty'
 import { mapGetters } from 'vuex'
+// import Sortable from 'sortablejs'
 
 export default {
   data() {
@@ -125,7 +141,9 @@ export default {
       total: 0,
       showStatus: false,
       addOrEditShowStatus: false,
-      dialogTitle: ''
+      dialogTitle: '',
+      maxShowOrder: 0,
+      minShowOrder: 0
     }
   },
   computed: {
@@ -135,6 +153,12 @@ export default {
   },
   created() {
     this.fetchData(this.pageNo, this.pageSize)
+    categoryApi.getShowOrder(this.merchantId)
+      .then(response => {
+        const { minShowOrder, maxShowOrder } = response.data
+        this.minShowOrder = minShowOrder
+        this.maxShowOrder = maxShowOrder
+      })
   },
   methods: {
     fetchData(pageNo, pageSize) {
@@ -261,6 +285,42 @@ export default {
       }).catch(error => {
         this.$message.error(error)
       })
+    },
+    // 上移
+    upOrder(id) {
+      categoryApi.upOrder(id)
+        .then(response => {
+          const { message } = response
+          this.$message({
+            type: 'success',
+            message: message,
+            duration: 1000
+          })
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
+      setTimeout(() => {
+        this.$router.go(0)
+      }, 1000)
+    },
+    // 下移
+    downOrder(id) {
+      categoryApi.downOrder(id)
+        .then(response => {
+          const { message } = response
+          this.$message({
+            type: 'success',
+            message: message,
+            duration: 1000
+          })
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
+      setTimeout(() => {
+        this.$router.go(0)
+      }, 1000)
     }
   }
 }
