@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <h3>商户信息编辑</h3>
+    <h2>商户信息编辑</h2>
     <el-form ref="editMerchantInfo" :model="info" label-width="120px" :rules="rules">
       <el-form-item label="商户名称" prop="name">
         <el-input v-model="info.name" placeholder="请输入商户名称" style="width: 300px" />

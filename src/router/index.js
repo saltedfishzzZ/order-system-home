@@ -62,6 +62,27 @@ export const constantRoutes = [
       meta: { title: '类别信息', icon: 'el-icon-collection-tag' }
     }]
   },
+  {
+    path: '/good',
+    component: Layout,
+    redirect: '/good/list',
+    name: '商品信息',
+    meta: { title: '商品信息', icon: 'el-icon-goods' },
+    children: [
+      {
+        path: 'list',
+        name: '商品列表',
+        component: () => import('@/views/good/list'),
+        meta: { title: '商品列表', icon: 'el-icon-menu' }
+      },
+      {
+        path: '/edit',
+        name: '编辑商品',
+        component: () => import('@/views/good/edit'),
+        meta: { title: '编辑商品', icon: 'el-icon-edit' }
+      }
+    ]
+  },
 
   // 404
   { path: '*', redirect: '/404', hidden: true }
