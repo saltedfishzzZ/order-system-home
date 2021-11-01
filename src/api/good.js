@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-export function listGood(merchantId, pageNo, pageSize) {
+export function listGood(searchObj) {
   return request({
     url: `/good/list`,
     method: 'post',
-    data: { merchantId, pageNo, pageSize }
+    data: { ...searchObj }
   })
 }
 
@@ -21,5 +21,12 @@ export function editStatusById(id, status) {
     url: `/good/editStatus`,
     method: 'post',
     params: { id, status }
+  })
+}
+
+export function allGoodStatus() {
+  return request({
+    url: `/good/getAllStatus`,
+    method: 'post'
   })
 }

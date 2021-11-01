@@ -60,3 +60,11 @@ export function downOrder(id) {
     method: 'post'
   })
 }
+
+export function getAllCategoryName(merchantId) {
+  return request({
+    url: `/category/getAllCategoryName`,
+    method: 'post',
+    params: { merchantId }
+  })
+}

@@ -5,7 +5,58 @@
         <h2>商品列表</h2>
       </el-col>
     </el-row>
-    <el-row style="padding-bottom: 20px;">
+    <el-row
+      align="middle"
+      style="padding-bottom: 20px; height: 100%;"
+    >
+      <el-col :span="20">
+        <label-wrap style="padding-right: 5px;">商品名: </label-wrap>
+        <el-input
+          v-model="searchObj.name"
+          placeholder="请输入商品名"
+          clearable
+          style="width: 15%; height: 80%;"
+        />
+        <label-wrap style="padding-left: 10px;padding-right: 5px;">类别名: </label-wrap>
+        <el-select
+          v-model="searchObj.categoryId"
+          filterable
+          clearable
+          placeholder="请选择所属类别"
+        >
+          <el-option
+            v-for="item in allCategoryName"
+            :key="item.id"
+            :label="item.categoryName"
+            :value="item.id"
+          />
+        </el-select>
+        <label-wrap style="padding-left: 10px;padding-right: 5px;">商品状态: </label-wrap>
+        <el-select
+          v-model="searchObj.status"
+          filterable
+          clearable
+          placeholder="请选择商品状态"
+          style="padding-right: 10px;"
+        >
+          <el-option
+            v-for="item in allGoodStatus"
+            :key="item.code"
+            :label="item.status"
+            :value="item.code"
+          />
+        </el-select>
+        <el-button
+          size="medium"
+          type="primary"
+          @click="searchData"
+        >搜索</el-button>
+        <el-button
+          size="medium"
+          type="primary"
+          @click="clearSearch"
+        >清空</el-button>
+      </el-col>
       <el-col :span="24" :offset="21">
         <el-button
           size="small"
@@ -58,38 +109,50 @@
       <el-table-column
         label="ID"
         prop="id"
+        align="center"
+        width="50"
       />
       <el-table-column
         label="商品名"
         prop="name"
+        align="center"
       />
       <el-table-column
         v-slot="props"
         label="类别名"
+        align="center"
       >
         <el-tag>{{ props.row.categoryName }}</el-tag>
       </el-table-column>
       <el-table-column
         v-slot="props"
         label="商品状态"
+        align="center"
       >
         <el-tag>{{ props.row.goodStatus }}</el-tag>
       </el-table-column>
       <el-table-column
         v-slot="props"
         label="库存"
+        align="center"
+        width="100"
       >{{ props.row.stock === -1 ? '不限量' : stock }}</el-table-column>
       <el-table-column
         label="价格(元)"
         prop="price"
+        align="center"
+        width="100"
       />
       <el-table-column
         label="包装费(元)"
         prop="packingFee"
+        align="center"
+        width="100"
       />
       <el-table-column
         label="创建时间"
         prop="createTime"
+        align="center"
       />
       <el-table-column
         align="center"
@@ -164,6 +227,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import * as goodApi from '@/api/good'
+import { getAllCategoryName } from '@/api/categoty'
 
 export default {
   data() {
@@ -171,7 +235,10 @@ export default {
       goodList: [],
       pageNo: 1,
       pageSize: 10,
-      total: 0
+      total: 0,
+      searchObj: {},
+      allCategoryName: [],
+      allGoodStatus: []
     }
   },
   computed: {
@@ -181,16 +248,25 @@ export default {
   },
   created() {
     this.fetchGoodList()
+    this.getAllCategoryName()
+    this.getAllGoodStatus()
   },
   methods: {
     fetchGoodList() {
-      goodApi.listGood(this.merchantId, this.pageNo, this.pageSize)
+      this.searchObj.merchantId = this.merchantId
+      this.searchObj.pageNo = this.pageNo
+      this.searchObj.pageSize = this.pageSize
+      goodApi.listGood(this.searchObj)
         .then(response => {
           const { content, totalElements } = response.data.goods
           this.goodList = content
           this.total = totalElements
         })
         .catch(error => this.$message.error(error))
+    },
+    // 搜索
+    searchData() {
+      this.fetchGoodList()
     },
     // 改变页的数量
     changePageSize(val) {
@@ -201,6 +277,26 @@ export default {
     changePageNo(val) {
       this.pageNo = val
       this.fetchGoodList()
+    },
+    // 获取全部类别
+    getAllCategoryName() {
+      getAllCategoryName(this.merchantId)
+        .then(response => {
+          this.allCategoryName = response.data.allCategoryName
+        })
+        .catch(error => this.$message.error(error))
+    },
+    // 获取全部商品状态
+    getAllGoodStatus() {
+      goodApi.allGoodStatus()
+        .then(response => {
+          this.allGoodStatus = response.data.allStatus
+        })
+        .catch(error => this.$message.error(error))
+    },
+    // 清空搜索框
+    clearSearch() {
+      this.searchObj = {}
     },
     // 获取对应的改变商品状态的方法
     getShowNameByStatus(status) {
