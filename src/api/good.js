@@ -16,6 +16,14 @@ export function deleteById(id) {
   })
 }
 
+export function batchDelete(ids) {
+  return request({
+    url: `/good/batchDelete`,
+    method: 'post',
+    data: ids
+  })
+}
+
 export function editStatusById(id, status) {
   return request({
     url: `/good/editStatus`,

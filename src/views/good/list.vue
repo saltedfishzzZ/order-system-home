@@ -67,6 +67,7 @@
           size="small"
           type="danger"
           style="margin-right: 20px;"
+          @click="batchDelete"
         >批量删除
         </el-button>
       </el-col>
@@ -75,6 +76,7 @@
       :data="goodList"
       border
       style="width: 100%;"
+      @selection-change="handleSelection"
     >
       <el-table-column type="expand">
         <template slot-scope="props">
@@ -228,6 +230,7 @@
 import { mapGetters } from 'vuex'
 import * as goodApi from '@/api/good'
 import { getAllCategoryName } from '@/api/categoty'
+import * as categoryApi from "@/api/categoty";
 
 export default {
   data() {
@@ -238,7 +241,8 @@ export default {
       total: 0,
       searchObj: {},
       allCategoryName: [],
-      allGoodStatus: []
+      allGoodStatus: [],
+      selectedGoodIds: []
     }
   },
   computed: {
@@ -347,6 +351,49 @@ export default {
           }, 1000)
         })
         .catch(error => this.$message.error(error))
+    },
+    // 表格中选中处理
+    handleSelection(val) {
+      this.selectedGoodIds = val
+    },
+    // 批量删除选中数据
+    batchDelete() {
+      // 选中数量为0时无需删除
+      if (this.selectedGoodIds.length === 0) {
+        this.$notify.info({
+          title: '消息',
+          message: '当前无选中数据可删除'
+        })
+        return
+      }
+      // 当有选中数据时
+      this.$confirm('确认批量删除吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const selectIdList = []
+        this.selectedGoodIds.map(item => selectIdList.push(item.id))
+        console.log(selectIdList)
+        goodApi.batchDelete(selectIdList)
+          .then(response => {
+            console.log(response)
+            const { message } = response
+            this.$message({
+              type: 'success',
+              message: message,
+              duration: 1000
+            })
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+        setTimeout(() => {
+          this.$router.go(0)
+        }, 1000)
+      }).catch(error => {
+        this.$message.error(error)
+      })
     }
   }
 }
