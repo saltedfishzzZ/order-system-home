@@ -230,7 +230,6 @@
 import { mapGetters } from 'vuex'
 import * as goodApi from '@/api/good'
 import { getAllCategoryName } from '@/api/categoty'
-import * as categoryApi from "@/api/categoty";
 
 export default {
   data() {
