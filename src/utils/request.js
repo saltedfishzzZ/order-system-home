@@ -3,7 +3,7 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
-const base_URL = 'http://localhost:8000'
+const base_URL = 'http://localhost:8111'
 
 // create an axios instance
 const service = axios.create({

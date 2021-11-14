@@ -10,14 +10,14 @@
       style="padding-bottom: 20px; height: 100%;"
     >
       <el-col :span="20">
-        <label-wrap style="padding-right: 5px;">商品名: </label-wrap>
+        <label style="padding-right: 5px;">商品名: </label>
         <el-input
           v-model="searchObj.name"
           placeholder="请输入商品名"
           clearable
           style="width: 15%; height: 80%;"
         />
-        <label-wrap style="padding-left: 10px;padding-right: 5px;">类别名: </label-wrap>
+        <label style="padding-left: 10px;padding-right: 5px;">类别名: </label>
         <el-select
           v-model="searchObj.categoryId"
           filterable
@@ -31,7 +31,7 @@
             :value="item.id"
           />
         </el-select>
-        <label-wrap style="padding-left: 10px;padding-right: 5px;">商品状态: </label-wrap>
+        <label style="padding-left: 10px;padding-right: 5px;">商品状态: </label>
         <el-select
           v-model="searchObj.status"
           filterable
@@ -61,6 +61,7 @@
         <el-button
           size="small"
           type="primary"
+          @click="addGood"
         >添加
         </el-button>
         <el-button
@@ -93,7 +94,7 @@
               <span>{{ props.row.goodsDetail.extraElements }}</span>
             </el-form-item>
             <el-form-item label="描述">
-              <span>{{ props.row.goodsDetail.desc }}</span>
+              <span>{{ props.row.goodsDetail.description }}</span>
             </el-form-item>
             <el-form-item label="份量">
               <span>{{ props.row.goodsDetail.weight }}</span>
@@ -112,7 +113,7 @@
         label="ID"
         prop="id"
         align="center"
-        width="50"
+        width="80"
       />
       <el-table-column
         label="商品名"
@@ -138,7 +139,7 @@
         label="库存"
         align="center"
         width="100"
-      >{{ props.row.stock === -1 ? '不限量' : stock }}</el-table-column>
+      >{{ props.row.stock === -1 ? '不限量' : props.row.stock }}</el-table-column>
       <el-table-column
         label="价格(元)"
         prop="price"
@@ -165,6 +166,7 @@
             size="mini"
             type="primary"
             style="margin-right: 5px;"
+            @click="editGood(scope.row.id)"
           >编辑
           </el-button>
           <el-popconfirm
@@ -334,6 +336,14 @@ export default {
           }, 500)
         })
         .catch(error => this.$message.error(error))
+    },
+    // 添加
+    addGood() {
+      this.$router.push('/good/edit')
+    },
+    // 修改商品
+    editGood(id) {
+      this.$router.push(`/good/edit/${id}`)
     },
     // 根据id删除
     deleteById(id) {

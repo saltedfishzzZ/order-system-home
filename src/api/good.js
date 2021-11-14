@@ -8,6 +8,30 @@ export function listGood(searchObj) {
   })
 }
 
+export function getGood(id) {
+  return request({
+    url: `/good/getGood`,
+    method: 'post',
+    params: { id }
+  })
+}
+
+export function addGood(obj) {
+  return request({
+    url: `/good/addGood`,
+    method: 'post',
+    data: obj
+  })
+}
+
+export function editGood(obj) {
+  return request({
+    url: `/good/editGood`,
+    method: 'post',
+    data: obj
+  })
+}
+
 export function deleteById(id) {
   return request({
     url: `/good/deleteById`,

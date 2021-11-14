@@ -76,8 +76,15 @@ export const constantRoutes = [
         meta: { title: '商品列表', icon: 'el-icon-menu' }
       },
       {
-        path: '/edit',
+        path: 'edit',
+        name: '新增商品',
+        component: () => import('@/views/good/edit'),
+        meta: { title: '编辑商品', icon: 'el-icon-edit' }
+      },
+      {
+        path: 'edit/:id',
         name: '编辑商品',
+        hidden: true,
         component: () => import('@/views/good/edit'),
         meta: { title: '编辑商品', icon: 'el-icon-edit' }
       }
