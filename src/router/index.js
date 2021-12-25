@@ -91,6 +91,22 @@ export const constantRoutes = [
     ]
   },
 
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/list',
+    name: '用户管理',
+    meta: { title: '用户管理', icon: 'el-icon-menu '},
+    children: [
+      {
+        path: 'list',
+        name: '用户列表',
+        component: () => import('@/views/user/list'),
+        meta: { title: '用户列表', icon: 'el-icon-menu' }
+      }
+    ]
+  },
+
   // 404
   { path: '*', redirect: '/404', hidden: true }
 ]
