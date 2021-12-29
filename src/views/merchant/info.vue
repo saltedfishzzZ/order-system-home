@@ -34,6 +34,16 @@
         </template>
         {{ merchantInfo.businessStartTime }} - {{ merchantInfo.businessEndTime }}
       </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">
+          <i class="el-icon-tickets" />&nbsp;商户LOGO
+        </template>
+        <el-image :src="merchantInfo.picture" style="width: 400px; height: 300px;">
+          <div slot="error" class="image-slot">
+            <i class="el-icon-picture-outline"></i>
+          </div>
+        </el-image>
+      </el-descriptions-item>
     </el-descriptions>
   </div>
 </template>

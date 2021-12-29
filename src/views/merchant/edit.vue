@@ -27,6 +27,21 @@
       <el-form-item label="商户公告" prop="announcement">
         <el-input v-model="info.announcement" autosize type="textarea" maxlength="255" show-word-limit style="width: 500px" />
       </el-form-item>
+      <el-form-item label="商户LOGO" prop="picture">
+        <el-upload
+          class="avatar-uploader"
+          :action="apiHost"
+          :headers="headers"
+          :show-file-list="false"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :on-success="handleSuccess"
+          :before-upload="checkFile"
+        >
+          <img v-if="info.picture" :src="info.picture" class="avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submit">确定</el-button>
         <el-button @click="cancel">取消</el-button>
@@ -34,9 +49,37 @@
     </el-form>
   </div>
 </template>
+
+<style>
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 200px;
+  height: 200px;
+  line-height: 200px;
+  text-align: center;
+}
+.avatar {
+  width: 200px;
+  height: 200px;
+  display: block;
+}
+</style>
+
 <script>
 import { mapGetters } from 'vuex'
 import { getMerchantInfo, editMerchantInfo } from '@/api/merchant'
+import { getToken } from '@/utils/auth'
 
 export default {
   data() {
@@ -48,7 +91,8 @@ export default {
         telephone: '',
         announcement: '',
         businessStartTime: '',
-        businessEndTime: ''
+        businessEndTime: '',
+        picture: ''
       },
       rules: {
         name: [
@@ -66,7 +110,9 @@ export default {
         announcement: [
           { min: 5, max: 500, message: '商户公告长度在5-500之间', trigger: 'blur' }
         ]
-      }
+      },
+      apiHost: 'http://localhost:8111/upload',
+      headers: {}
     }
   },
   computed: {
@@ -75,6 +121,7 @@ export default {
     ])
   },
   created() {
+    this.headers.token = getToken()
     this.getInfo()
   },
   methods: {
@@ -87,6 +134,7 @@ export default {
           this.info.telephone = merchantInfo.telephone
           this.info.announcement = merchantInfo.announcement
           this.businessTime = [merchantInfo.businessStartTime, merchantInfo.businessEndTime]
+          this.info.picture = merchantInfo.picture
         })
         .catch(error => {
           this.$message.error(error)
@@ -128,6 +176,29 @@ export default {
     },
     cancel() {
       this.$router.push('/merchant/info')
+    },
+    handleSuccess(res, file) {
+      // this.imageUrl = URL.createObjectURL(file.raw)
+      this.info.picture = 'http://' + res.data.fileName
+    },
+    checkFile(file) {
+      const isJPG = file.type === 'image/jpeg' || file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
     }
   }
 }
